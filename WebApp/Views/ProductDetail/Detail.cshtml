@@ -1,0 +1,230 @@
+﻿@inject IConfiguration Configuration;
+@{
+    string tinhTrangSoLuong = String.Empty;
+}
+<style>
+    .container {
+        max-width: 1450px !important;
+    }
+    .wrapper {
+        display: inline-flex;
+        background: #fff;
+        height: 100px;
+        width: 400px;
+        align-items: center;
+        justify-content: space-evenly;
+        border-radius: 5px;
+        padding: 20px 15px;
+        box-shadow: 5px 5px 30px rgba(0,0,0,0.2);
+    }
+
+        .wrapper .option {
+            background: #fff;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 0 10px;
+            border: 2px solid lightgrey;
+            transition: all 0.3s ease;
+        }
+
+            .wrapper .option .dot {
+                height: 20px;
+                width: 20px;
+                background: #d9d9d9;
+                border-radius: 50%;
+                position: relative;
+            }
+
+                .wrapper .option .dot::before {
+                    position: absolute;
+                    content: "";
+                    top: 4px;
+                    left: 4px;
+                    width: 12px;
+                    height: 12px;
+                    background: #0069d9;
+                    border-radius: 50%;
+                    opacity: 0;
+                    transform: scale(1.5);
+                    transition: all 0.3s ease;
+                }
+
+    input[type="radio"] {
+        display: none;
+    }
+
+    #option-1:checked:checked ~ .option-1,
+    #option-2:checked:checked ~ .option-2 {
+        border-color: #0069d9;
+        background: #0069d9;
+    }
+
+        #option-1:checked:checked ~ .option-1 .dot,
+        #option-2:checked:checked ~ .option-2 .dot {
+            background: #fff;
+        }
+
+            #option-1:checked:checked ~ .option-1 .dot::before,
+            #option-2:checked:checked ~ .option-2 .dot::before {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+    .wrapper .option span {
+        font-size: 20px;
+        color: #808080;
+    }
+
+    #option-1:checked:checked ~ .option-1 span,
+    #option-2:checked:checked ~ .option-2 span {
+        color: #fff;
+    }
+
+</style>
+@foreach (var t in ViewBag.product)
+{
+    <section class="py-5">
+        <div class="container">
+            <h4 class="title text-dark">
+                [Mới 100%]* @t.NameProduct @t.Code (@t.TenCpu,@t.ThongSoRam, @t.ThongSoHardDrive,@t.TenCardVGA @t.ThongSoCardVGA,@t.KichCoManHinh @t.TanSoManHinh @t.ChatLieuManHinh )
+               
+              
+            </h4>
+            <div class="row gx-5">
+                <div class="col-md-4 col-md-4">
+                    <div class="border rounded-4 mb-3 d-flex justify-content-center">
+                        <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="">
+                            <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(t.LinkImage)" />
+                        </a>
+                    </div>
+
+                    <div class="d-flex justify-content-center mb-3">
+                        @if (t.OtherImages != null )
+                        {
+                            @foreach (var linkImagesOther in t.OtherImages)
+                            {
+                                <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image"  >
+                                    <img width="100" height="100" class="rounded-2" src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(linkImagesOther)" />
+                                </a>
+                            }
+                        }                                                                       
+                    </div>
+                    <h1>Thông số kỹ thuật</h1>
+                    <table class="table border mt-3 mb-2">
+                        <tr>
+                            <th class="py-2">CPU:</th>
+                            <td class="py-2">@t.TenCpu</td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Ram:</th>
+                            <td class="py-2">@t.ThongSoRam</td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Ổ cứng:</th>
+                            <td class="py-2">@t.ThongSoHardDrive</td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Card VGA</th>
+                            <td class="py-2">@t.TenCardVGA @t.ThongSoCardVGA</td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Màn hình</th>
+                            <td class="py-2">@t.KichCoManHinh @t.TanSoManHinh @t.ChatLieuManHinh</td>
+                        </tr>
+                    </table>
+              
+                </div>
+                <div class="col-md-4 col-sm-4">             
+                            <div class="mb-3">
+                        <span class="h5">Giá bán: @t.ImportPrice.ToString("N0")</span>
+                        <span class="text-muted"><del>@t.Price.ToString("N0")</del></span><br>
+                        <span class="h5">Bảo hành: 12 Tháng</span><br>
+                                @if (t.AvailableQuantity > 0)
+                                {
+                                    tinhTrangSoLuong = "Còn hàng";
+                                }
+                                else
+                                {
+                                    tinhTrangSoLuong = "Hết hàng";
+                                }
+                                <span class="h5">Tình trạng: @tinhTrangSoLuong</span>
+                            </div>
+                        <p> Loại sản phẩm: @t.NameProductType </p>
+                        <p>Nhà sản xuất: @t.NameManufacturer </p>
+                        <p> Màu sắc: @t.NameColor </p>
+                            <hr />
+                <h2>CẤU HÌNH:</h2>
+                    @foreach (var k in ViewBag.listProductSame)
+                    {
+                        if(t.Code == k.Code)
+                        {
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedDisabled" checked disabled>
+                               
+                                <a class="nav-link mb-1" asp-controller="ProductDetail" asp-action="Detail" asp-route-code="@k.Code" asp-route-name="@k.NameProduct">
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">@k.TenCpu,@k.ThongSoRam, @k.ThongSoHardDrive</label>
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" disabled>
+
+                                <a class="nav-link mb-1" asp-controller="ProductDetail" asp-action="Detail" asp-route-code="@k.Code" asp-route-name="@k.NameProduct">
+                                    <label class="form-check-label" for="flexSwitchCheckDefault">@k.TenCpu,@k.ThongSoRam, @k.ThongSoHardDrive</label>
+                                </a>
+                            </div>
+                          
+                        }
+                    }
+                    <a asp-controller="Client" asp-action="AddProductToCart" asp-route-code="@t.Code" class="btn btn-warning shadow-0"> Mua ngay </a>
+                </div>
+               <div class="col-md-4 col-sm-4">
+                   <div class="">
+                        <ul class="list-unstyled">
+                            <li> <i class="fa-solid fa-star" style="color: #e2ff05;"></i>Chất lượng sản phẩm là hàng đầu</li>
+                            <li> <i class="fa-solid fa-star" style="color: #e2ff05;"></i>Dùng test máy 15 ngày đầu lỗi 1 đổi 1</li>
+                            <li> <i class="fa-solid fa-star" style="color: #e2ff05;"></i>Hỗ trợ và hậu mãi sau bán hàng tốt nhất</li>
+                            <li> <i class="fa-solid fa-star" style="color: #e2ff05;"></i>Phương thức thanh toán linh hoạt</li>
+                            <li> <i class="fa-solid fa-star" style="color: #e2ff05;"></i>Giao hàng miễn phí toàn quốc</li>
+                       </ul>
+                   </div>
+               </div>
+            </div>
+            </div>
+    </section>
+    <!-- content -->
+    <section class="bg-light border-top py-4">
+        <div class="container">
+            <div class="row gx-4">
+                <div class="col-lg-8 mb-4">
+                    <div class="border rounded-2 px-3 py-2 bg-white">
+                        <!-- Pills navs -->
+                        <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+                            <li class="nav-item d-flex" role="presentation">
+                                <a class="nav-link d-flex align-items-center justify-content-center w-100 active" id="ex1-tab-1" data-mdb-toggle="pill" role="tab" aria-controls="ex1-pills-1" aria-selected="true">Thông tin thêm về sản phẩm</a>
+                            </li>
+                        </ul>
+                        <!-- Pills navs -->
+                        <!-- Pills content -->
+                        <div class="tab-content" id="ex1-content">
+                            <div class="tab-pane fade show active" id="ex1-pills-1" role="tabpanel" aria-labelledby="ex1-tab-1">
+                              
+                                <p class="product-description">@Html.Raw(@t.Description)</p>
+                            </div>
+                        </div>
+                        <!-- Pills content -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

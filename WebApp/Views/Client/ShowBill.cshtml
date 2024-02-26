@@ -1,0 +1,212 @@
+﻿
+@{
+    float thanhTien = 0;
+    float total = 0;
+    float phaiTra = 0;
+}
+    <title>Hóa Đơn Bán Laptop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .invoice {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        background: azure;
+        margin-bottom:100px;
+        }
+        .header {
+            text-align: center;
+        }
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .invoice-details div {
+            flex: 1;
+        }
+        .customer-details {
+            margin-top: 20px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        .total {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+    .find-bill{
+        max-width:500px;
+       
+        margin-left: 100px;
+    }
+
+    .pd-bt-20{
+        margin-bottom: 20px;
+    }
+
+    .pd-top-30{
+        padding-top:30px;
+    }
+    .container{
+        max-width:1500px !important;
+    }
+</style>
+<div class="container">
+
+    <div class="pd-bt-20 pd-top-30  d-flex justify-content-center">
+<form asp-controller="Client" asp-action="ShowBill" class="d-flex">
+    <input class="form-control find-bill" name="invoiceCode" type="search" placeholder="Nhập mã hóa đơn để tìm kiếm" aria-label="Search">
+    <button class="btn btn-outline-success" type="submit">
+        <i class="fas fa-search"></i>
+    </button>
+</form>
+    </div>
+@if (ViewBag.Bill != null)
+{
+    <div class="invoice">
+        <div class="header">
+            <h1>HÓA ĐƠN BÁN LAPTOP</h1>
+        <p>Ngày: @ViewBag.Bill.CreateDate</p>
+        </div>
+        <div class="invoice-details">
+            <div>
+                <p>Mã hóa đơn: @ViewBag.Bill.InvoiceCode</p>
+                    @if (ViewBag.Bill.Status == 0)
+                    {
+                        <p>Trạng thái: Đơn hàng đã bị hủy.</p>
+                    }
+                    else if (ViewBag.Bill.Status == 1)
+                    {
+                        <p>Trạng thái: Đang chờ xác nhận.</p>
+                    }
+                    else if (ViewBag.Bill.Status == 2)
+                    {
+                        <p>Trạng thái: Chưa thanh toán - Chưa giao hàng.</p>
+                    }
+                    else if (ViewBag.Bill.Status == 3)
+                    {
+                        <p>Trạng thái: Chưa thanh toán - Đang giao hàng.</p>
+                    }
+                    else if (ViewBag.Bill.Status == 4)
+                    {
+                        <p>Trạng thái: Đã thanh toán - Chưa giao hàng.</p>
+                    }
+                    else if (ViewBag.Bill.Status == 5)
+                    {
+                        <p>Trạng thái: Chưa thanh toán - Giao hàng thất bại.</p>
+                    }
+                    else if (ViewBag.Bill.Status == 6)
+                    {
+                        <p>Trạng thái: Đã thanh toán - Giao hàng thất bại.</p>
+                    }
+                    else if (ViewBag.Bill.Status == 7)
+                    {
+                        <p>Trạng thái: Đơn hàng đã hoàn thành.</p>
+                    }
+                    else if (ViewBag.Bill.Status == 8)
+                    {
+                        <p>Trạng thái: Đang chờ đổi trả.</p>
+                    }
+                    @if (ViewBag.Bill.Payment == 1)
+                    {
+                        <p>Thanh toán: Tại cửa hàng</p>
+                    }
+                    else if (ViewBag.Bill.Payment == 2)
+                    {
+                        <p>Thanh toán: Khi nhận hàng (COD)</p>
+                    }
+                    else if (ViewBag.Bill.Payment == 3)
+                    {
+                        <p>Thanh toán: Chuyển khoản ngân hàng </p>
+                    }
+                    else
+                    {
+                        <p>Thanh toán: Chưa xác định</p>
+                    }
+                    <p>Người bán: </p>
+            </div>
+            <div>
+                <p>Khách hàng: @ViewBag.Bill.FullName</p>
+                <p>Địa chỉ: @ViewBag.Bill.Address</p>
+                <p>Số điện thoại: @ViewBag.Bill.PhoneNumber</p>
+            </div>
+        </div>
+        <div class="customer-details">
+            <h2>Danh Sách Sản Phẩm</h2>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Mã Sản Phẩm</th>
+                    <th>Số Lượng</th>
+                    <th>Đơn Giá</th>
+                    <th>Thành Tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var i in ViewBag.ListBillItem)
+                {
+                    thanhTien = i.price * i.quantity;
+                    total += thanhTien;
+                    <tr>
+                    <td>@i.codeProductDetail</td>
+                    <td>@i.quantity</td>
+                    <td>@i.price</td>
+                    <td>@thanhTien</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        <div class="total">
+            <p>Tổng cộng: @total</p>
+                <p>Giảm giá: @ViewBag.Bill.GiamGia</p>
+                @{
+                    phaiTra = total - (float)ViewBag.Bill.GiamGia;
+                }
+                <p>Thành tiền: @phaiTra</p>
+        </div>
+    </div>
+}
+else
+{
+   <h2>Không có dữ liệu</h2>
+}
+
+</div>
+@* <script>
+    $(document).ready(function () {
+        // Gán sự kiện click cho nút tìm kiếm
+        $("#searchButton").on("click", function () {
+            // Lấy giá trị từ trường nhập liệu
+            var invoiceCode = $("[name='invoiceCode']").val();
+
+            // Thực hiện AJAX
+            $.ajax({
+                url: '/Client/ShowBill2', // Đường dẫn tới action trong controller
+                type: 'GET', // Hoặc 'POST' tùy thuộc vào cách bạn đã thiết lập action của mình
+                data: { invoiceCode: invoiceCode }, // Dữ liệu gửi đi
+                success: function (data) {
+                    // Cập nhật nội dung của #invoiceContainer
+                    $("#invoiceContainer").html(data);
+                },
+                error: function (error) {
+                    // Xử lý lỗi nếu có
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script> *@
+

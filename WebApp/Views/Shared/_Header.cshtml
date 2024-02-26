@@ -1,0 +1,385 @@
+﻿@{
+    @using Microsoft.AspNetCore.Http;
+    var httpContext = ViewContext.HttpContext;
+    string accessToken = httpContext.Request.Cookies["access_token"];
+    string username = ViewContext.HttpContext.Session.GetString("username");
+    string statuswallet = ViewContext.HttpContext.Session.GetString("StatusPointWallet");
+}
+
+<style>
+
+    .navbar-nav a {
+        align-items: center;
+        }
+
+    .navbar-nav i {
+        font-size:25px;
+    }
+
+    .myform{
+        margin-left:30px;
+        margin-right:30px
+    }
+    .btn-login {
+        margin-top:30px;
+    }
+   
+</style>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg" style="background-color:white">
+    <a class="navbar-brand logoNav" href="#">
+        <img alt="Logo" src="/Images/logopt.jpg" style="max-width:65%;" />
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+            <li>
+                <a class="nav-link textNavbar" href="/">
+                    <i class="fa-solid fa-house" ></i>Trang chủ
+                </a>
+            </li>
+            <li>
+                <a class="nav-link textNavbar" href="/sản-phẩm">
+                    <i class="fa-solid fa-laptop"></i>Laptop mới
+                </a>
+            </li>
+            <li>
+                <a class="nav-link textNavbar" href="/hóa-đơn">
+                    <i class="fas fa-truck"></i>Tra cứu đơn hàng
+                </a>
+            </li>
+            
+            <form asp-controller="ProductDetail" asp-action="ShowListProductDetail" method="get" class="d-flex" style="margin:auto">
+                <input class="form-control me-2" name="searchString" style="width:280px" type="search" placeholder="Bạn muốn tìm sản phẩm gì?" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+            <li>
+                <a class="nav-link textNavbar" href="/Home/GetAllManagePost">
+                    <i class="fa-solid fa-newspaper"></i>Tin tức, khuyến mại
+                </a>
+            </li>
+          
+            @{
+                
+                if (username != null)
+                {
+                    <li>
+
+                        <a class="nav-link textNavbar" href="/giỏ-hàng">
+                            <i class="fas fa-cart-plus"></i>Giỏ hàng
+                        </a>
+
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-user" style="color:aqua;font-size:30px"></i>@username
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="/info">Thông tin cá nhân</a></li>
+                            <li><a class="dropdown-item" href="#">Xem đơn hàng</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="Login" asp-action="LogOut">Đăng xuất</a></li>
+                        </ul>
+                    </li>
+                    
+                }
+                else
+                {
+                    <form class="d-flex">
+                    <li>
+
+                        <a class="nav-link textNavbar" href="/giỏ-hàng">
+                            <i class="fas fa-cart-plus"></i>Giỏ hàng
+                        </a>
+
+                    </li>
+                <a class="nav-link btnDangKy" id="resgisterLink">
+                    <span class="textDangKy">Đăng ký</span>
+                </a>
+                        <a class="nav-link btnDangNhap" id="loginLink">
+                    <span class="textDangNhap">Đăng nhập</span>
+                </a>
+               
+
+            </form>
+                }
+            }
+          
+        </ul>
+    </div>
+</nav>
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div >
+        <div class="modal-content">     
+            <div id="first">
+                <div class="myform form ">
+                        <form asp-controller="Login" asp-action="LoginWithJWT" method="post" name="login" class="container">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tài khoản</label>
+                                <input type="text" name="username" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Tài khoản">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Mật khẩu</label>
+                            <input type="password" name="password" id="password" class="form-control" aria-describedby="emailHelp" placeholder="Mật khẩu">
+                        </div>
+                        <div class="col-md-12 text-center ">
+                            <button type="submit" class=" btn btn-block mybtn btn-primary tx-tfm btn-login">Đăng nhập</button>
+                        </div>
+                       
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div>
+        <div class="modal-content">
+                	  <div id="second">
+			      <div class="myform form ">
+                      
+                        <form asp-controller="Login" asp-action="AccountSignUp" method="post" name="registration" onsubmit="submitForm(event)">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Họ và tên</label>
+                                <input type="text" name="fullName" class="form-control" id="fullName" aria-describedby="emailHelp" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Tài khoản</label>
+                                <input type="text" name="userName" class="form-control" id="userName" aria-describedby="emailHelp" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Email</label>
+                                <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Số điện thoại</label>
+                                <input type="tel" name="phoneNumber" class="form-control" id="phoneNumber" aria-describedby="emailHelp" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Địa chỉ</label>
+                                <input type="text" name="address" class="form-control" id="address" aria-describedby="emailHelp" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Mật khẩu</label>
+                                <input type="password" name="password" id="password" class="form-control" aria-describedby="emailHelp" placeholder="">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Nhập lại mật khẩu</label>
+                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" aria-describedby="emailHelp" placeholder="">
+                            </div>
+                            
+                            <div class="col-md-12 text-center mb-3">
+                                <button type="submit" class="btn btn-block mybtn btn-primary tx-tfm">Đăng ký</button>
+                            </div>
+                        </form>
+                     </div>
+			</div>
+            </div>
+        </div>
+        </div>
+    </div>
+<script>
+
+  
+
+    $(document).ready(function () {
+        $("#loginLink").click(function (e) {
+            e.preventDefault();
+            $("#loginModal").modal("show");
+        });
+        $("#resgisterLink").click(function (e) {
+            e.preventDefault();
+            $("#registerModal").modal("show");
+        });
+    });
+    $("#signup").click(function () {
+        $("#first").fadeOut("fast", function () {
+            $("#second").fadeIn("fast");
+        });
+    });
+
+    $("#signin").click(function () {
+        $("#second").fadeOut("fast", function () {
+            $("#first").fadeIn("fast");
+        });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var registrationForm = document.forms["registration"];
+
+        registrationForm.addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            var fullName = registrationForm.elements["fullName"].value;
+            var userName = registrationForm.elements["userName"].value;
+            var email = registrationForm.elements["email"].value;
+            var address = registrationForm.elements["address"].value;
+            var phoneNumber = registrationForm.elements["phoneNumber"].value;
+            var password = registrationForm.elements["password"].value;
+            var confirmPassword = registrationForm.elements["confirmPassword"].value;
+
+            if (
+                fullName.trim() === '' ||
+                userName.trim() === '' ||
+                email.trim() === '' ||
+                password.trim() === '' ||
+                confirmPassword.trim() === '' ||
+                phoneNumber.trim() === '' ||
+                address.trim() === ''
+            ) {
+                alert('Vui lòng điền đầy đủ thông tin');
+            } else if (userName.length < 4 || userName.length > 100) {
+                alert('Tên đăng nhập phải có ít nhất 4 và nhiều nhất 100 kí tự.');
+            } else if (password.length < 7 || password.length > 100) {
+                alert('Mật khẩu phải có ít nhất 7 và nhiều nhất 100 kí tự.');
+            } else if (password !== confirmPassword) {
+                alert('Mật khẩu và xác nhận mật khẩu không khớp');
+            } else if (!/\d/.test(password)) {
+                alert('Mật khẩu phải chứa ít nhất một chữ số (0-9).');
+            } else if (!/[A-Z]/.test(password)) {
+                alert('Mật khẩu phải chứa ít nhất một chữ viết hoa (A-Z).');
+            } else if (!/[a-z]/.test(password)) {
+                alert('Mật khẩu phải chứa ít nhất một chữ viết thường (a-z).');
+            } else if (!/\W/.test(password)) {
+                alert('Mật khẩu phải chứa ít nhất một ký tự không phải chữ hoặc số.');
+            } else if (fullName.length <= 3 || fullName.length > 100) {
+                alert('Họ tên phải có ít nhất 3 và nhiều nhất 100 kí tự.');
+            } else if (address.length <= 5 || address.length > 100) {
+                alert('Địa chỉ phải có ít nhất 5 và nhiều nhất 100 kí tự.');
+            } else {
+                // If all conditions pass, manually submit the form
+                registrationForm.submit();
+            }
+        });
+
+        // Adding phone number validation
+        var phoneNumberInput = registrationForm.elements["phoneNumber"];
+        phoneNumberInput.addEventListener("blur", function () {
+            var vnf_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+            var phoneNumber = phoneNumberInput.value;
+            if (phoneNumber !== '') {
+                if (vnf_regex.test(phoneNumber) == false) {
+                    alert('Số điện thoại của bạn không đúng định dạng!');
+                } else {
+                    
+                }
+            } else {
+                alert('Bạn chưa điền số điện thoại!');
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var loginForm = document.forms["login"];
+
+        loginForm.addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            var username = loginForm.elements["username"].value;
+            var password = loginForm.elements["password"].value;
+
+            if (username.trim() === '' || password.trim() === '') {
+                alert('Vui lòng điền đầy đủ thông tin');
+            } else {
+                try {
+                    // Try to submit the form
+                    var response = await fetch(loginForm.action, {
+                        method: loginForm.method,
+                        body: new FormData(loginForm),
+                    });
+
+                    if (!response.ok) {
+                        // Handle error response
+                        if (response.status === 400) {
+                            alert('Sai tài khoản hoặc mật khẩu');
+                        } else {
+                            alert('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+                        }
+                    } else {
+                        // If all conditions pass, manually submit the form
+                        loginForm.submit();
+                    }
+                } catch (error) {
+                    console.error('Đã xảy ra lỗi:', error);
+                    alert('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+                }
+            }
+        });
+    });
+
+
+
+
+    // $(function () {
+    //     $("form[name='login']").validate({
+    //         rules: {
+
+    //             username: {
+    //                 required: true,
+    //             },
+    //             password: {
+    //                 required: true,
+
+    //             }
+    //         },
+    //         messages: {
+    //             email: "Please enter a valid email address",
+
+    //             password: {
+    //                 required: "Please enter password",
+
+    //             }
+
+    //         },
+    //         submitHandler: function (form) {
+    //             form.submit();
+    //         }
+    //     });
+    // });
+
+
+
+    // $(function () {
+
+    //     $("form[name='registration']").validate({
+    //         rules: {
+    //             firstname: "required",
+    //             lastname: "required",
+    //             email: {
+    //                 required: true,
+    //                 email: true
+    //             },
+    //             password: {
+    //                 required: true,
+    //                 minlength: 5
+    //             }
+    //         },
+
+    //         messages: {
+    //             firstname: "Please enter your firstname",
+    //             lastname: "Please enter your lastname",
+    //             password: {
+    //                 required: "Please provide a password",
+    //                 minlength: "Your password must be at least 5 characters long"
+    //             },
+    //             email: "Please enter a valid email address"
+    //         },
+
+    //         submitHandler: function (form) {
+    //             form.submit();
+    //         }
+    //     });
+    // });
+
+</script>

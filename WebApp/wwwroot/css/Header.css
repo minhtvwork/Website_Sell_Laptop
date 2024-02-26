@@ -1,0 +1,195 @@
+﻿/*Navigation*/
+.Nav {
+    height: 176px;
+    margin-bottom: 10px;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.Logo-img {
+    position: relative;
+    width: 50px;
+    height: 50px;
+}
+
+    .Logo-img img {
+        max-width: 100%;
+        max-height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+.Top-head {
+    padding-top: 10px;
+    margin: auto;
+    margin-bottom: 15px;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+    .search-container i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translate(0, -50%);
+        color: #999;
+    }
+
+.search-input {
+    padding-left: 25px;
+    border-radius: 5px;
+    border: none;
+    width: 584px;
+    height: 45px;
+}
+
+.Hot-Line i,
+.Phone-number i,
+.User-Infor i {
+    color: white;
+    font-size: 40px;
+}
+
+.Hot-Line,
+.Phone-number,
+.User-Infor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+    .Hot-Line span,
+    .Phone-number span,
+    .User-Infor span {
+        font-size: 15px;
+        color: white;
+        margin-left: 5px;
+        font-weight: bold;
+    }
+/* Phần thanh chọn loại sản phẩm*/
+.Menu {
+    height: 85px;
+    margin: auto;
+    border-radius: 10px;
+}
+
+.Menu-list {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 10px; /* Khoảng cách giữa các item */
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(5, 125,182,0.3);
+    height: 100%; /* Đảm bảo chiều cao của Menu-list */
+    border-radius:10px;
+}
+
+.Menu-list {
+    display: flex;
+    grid-gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+.item span {
+    font-weight: bold;
+    color: #ffffff;
+    font-size: larger;
+}
+.item a {
+    text-decoration: none;
+}
+.item {
+    padding: 10px;
+    text-align: center;
+}
+body {
+    padding-top: 4.2rem;
+    padding-bottom: 4.2rem;
+    background: rgba(0, 0, 0, 0.76);
+}
+
+a {
+    text-decoration: none !important;
+}
+
+h1, h2, h3 {
+    font-family: 'Kaushan Script', cursive;
+}
+
+.myform {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    padding: 1rem;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: 1.1rem;
+    outline: 0;
+    max-width: 500px;
+}
+
+.tx-tfm {
+    text-transform: uppercase;
+}
+
+.mybtn {
+    border-radius: 50px;
+}
+
+.login-or {
+    position: relative;
+    color: #aaa;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.span-or {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: -2px;
+    margin-left: -25px;
+    background-color: #fff;
+    width: 50px;
+    text-align: center;
+}
+
+.hr-or {
+    height: 1px;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+.google {
+    color: #666;
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    outline: none;
+    border: 1px solid lightgrey;
+}
+
+form .error {
+    color: #ff0000;
+}
+
+#second {
+    display: none;
+}

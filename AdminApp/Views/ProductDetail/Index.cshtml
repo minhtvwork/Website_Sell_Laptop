@@ -1,0 +1,667 @@
+﻿@{
+    ViewBag.Title = "Product Details";
+    @using Shop_Models;
+    @using Shop_Models.Entities;
+    @model Shop_Models.Dto.ProductDetailDto;
+
+}
+@* <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.1207/styles/kendo.common.min.css">
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.1207/styles/kendo.default.min.css">
+<script src="https://kendo.cdn.telerik.com/2021.3.1207/js/jquery.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2021.3.1207/js/kendo.all.min.js"></script> *@
+
+
+<!-- Include thư viện Toastr -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+<form asp-controller="ProductDetail" asp-action="ImportProductsFromExcel" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="excelFile">Chọn file excel</label>
+        <input type="file" name="excelFile" class="form-control-file" accept=".xlsx" required />
+    </div>
+    <button type="submit" class="btn btn-primary">
+        <div class="d-flex justify-content-between">
+            <span>Lưu lại</span>
+        </div>
+    </button>
+</form>
+<div id="example">
+    <div id="grid"></div>
+    <div id="modalContent" style="display: block;">
+    </div>
+</div>
+<style>
+    #grid {
+        margin: 0;
+        padding: 0;
+        border-width: 0;
+        /* height: 100%; /* DO NOT USE !important for setting the Grid height! */ */ height: 900px;
+    }
+
+    .k-grid-content.k-auto-scrollable {
+        height: 660px !important;
+    }
+
+
+
+    /* Đặt kích thước modal mặc định */
+    .modal-dialog {
+        max-width: 90%;
+        width: auto;
+    }
+
+    /* Thiết lập thuộc tính cho việc kéo modal */
+    .modal-content {
+        overflow: hidden; /* Ngăn chặn nội dung bên ngoài khỏi modal */
+    }
+
+    /* Thiết lập kích thước của modal-body khi kéo */
+    .modal-body {
+        max-height: 80vh; /* Điều chỉnh kích thước tùy ý dựa trên nhu cầu của bạn */
+        overflow-y: auto;
+    }
+</style>
+
+
+@*  create product details  *@
+<div id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm mới sản phẩm</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div id="example">
+                    <form id="formedit" asp-controller="ProductDetail"  method="post" enctype="multipart/form-data">
+
+                        <div class="row">
+                            <div class=" col-md-3">
+                                <label asp-for="Code">Mã Sản Phẩm</label>
+                                <input asp-for="Code" class="form-control" placeholder="Nhập mã sản phẩm" />
+                                <span asp-validation-for="Code" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">Tên Sản Phẩm</label>
+                                <select asp-for="IdProduct" class="form-select">
+                                    <option value="">Chọn tên Sản phẩm</option>
+                                    @foreach (var item in ViewBag.GetProduct)
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+
+                                </select>
+                                @*  <span asp-validation-for="IdProduct" class="text-danger"></span> *@
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label"> Màu Sắc</label>
+                                <select class="form-select" asp-for="IdColor" id="selectColor">
+                                    <option value="">Chọn Màu Sắc</option>
+                                    @foreach (var t in ViewBag.GetColor)
+                                    {
+                                        <option value="@t.Id">@t.Name</option>
+                                    }
+                                </select>
+                                @* <span asp-validation-for="IdColor" id="colorError" class="text-danger"></span> <!-- Thông báo lỗi --> *@
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">Ram</label>
+                                <select class="form-select" asp-for="IdRam" id="selectRam">
+                                    <option value="">Chọn Ram</option>
+                                    @foreach (var t in (List<Ram>)ViewBag.GetRam)
+                                    {
+                                        <option value="@t.Id">@t.Ma</option>
+                                    }
+                                </select>
+                                @* <span asp-validation-for="IdRam" id="ramError" class="text-danger"></span> <!-- Thông báo lỗi --> *@
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">Vi Xử Lí</label>
+                                <select class="form-select" asp-for="IdCpu" id="selectCPU">
+                                    <option value="">Chọn Vi Xử Lí</option>
+                                    @foreach (var t in (List<Cpu>)ViewBag.GetCPU)
+                                    {
+                                        <option value="@t.Id">@t.Ma</option>
+                                    }
+
+                                </select>
+                                @* <span asp-validation-for="IdCpu" id="cpuError" class="text-danger"></span> <!-- Thông báo lỗi --> *@
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">Màn Hình</label>
+                                <select class="form-select" asp-for="IdScreen" id="selectScreen">
+                                    <option value="">Chọn Màn Hình</option>
+                                    @foreach (var t in (List<Screen>)ViewBag.GetScreen)
+                                    {
+                                        <option value="@t.Id">@t.Ma</option>
+                                    }
+
+                                </select> @*<span asp-validation-for="IdScreen" id="screenError" class="text-danger"></span> <!-- Thông báo lỗi --> *@
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">HardDrive</label>
+                                <select class="form-select" asp-for="IdHardDrive" id="selectHardDrive">
+                                    <option value="">Chọn HardDrive</option>
+                                    @foreach (var t in (List<HardDrive>)ViewBag.GetHardDrive)
+                                    {
+                                        <option value="@t.Id">@t.Ma</option>
+                                    }
+
+                                </select> @*<span asp-validation-for="IdHardDrive" id="hardDriveError" class="text-danger"></span> <!-- Thông báo lỗi --> *@
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">CardVGA</label>
+                                <select class="form-select" asp-for="IdCardVGA" id="selectCardVGA">
+                                    <option value="">Chọn CardVGA</option>
+                                    @foreach (var t in (List<CardVGA>)ViewBag.GetlistCardVGA)
+                                    {
+                                        <option value="@t.Id">@t.Ma</option>
+                                    }
+
+                                </select>
+                                @* <span asp-validation-for="IdCardVGA" id="cardVgaError" class="text-danger"></span> <!-- Thông báo lỗi --> *@
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">Cập Nhật</label>
+                                <input type="string" class="form-control" id="exampleFormControlInput1" asp-for="Upgrade" placeholder="Cập Nhật">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">Giá Bán</label>
+                                <input type="number" class="form-control" id="exampleFormControlInput1" asp-for="Price" placeholder="Nhập Giá Bán" required min="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">Giá Nhập</label>
+                                <input type="number" class="form-control" id="exampleFormControlInput1" asp-for="ImportPrice" placeholder=" Nhập Giá Nhập" required min="0">
+                            </div>
+                            <div id="error-toast-container" aria-live="polite" aria-atomic="true" style="position: fixed; top: 0; right: 0; z-index: 1050;"></div>
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">Hình Ảnh</label>
+                                <div id="imageInputsContainer">
+                                    <input type="file" name="formFiles" class="form-control" accept="image/*" multiple />
+                                </div>
+                                <button type="button" class="btn btn-secondary mt-2" onclick="addImageInput()">Thêm 1 ảnh</button>
+                            </div>
+                        </div>
+
+
+                        <div class="demo-section wide">
+                            <label for="exampleFormControlInput1" class="form-label">Bài đăng, chi tiết về sản phẩm</label>
+
+                            <div class="k-editor">
+                                <textarea class="form-control is-invalid" name="editor" id="description" rows="30" cols="30" style="width:100%; height:840px" aria-label="editor" required></textarea>
+                            </div>
+
+                            <div class="invalid-feedback">
+                                Vui lòng nhập nội dung trường này.
+                            </div>
+                        </div>
+
+
+                        @* <button type="submit" class="btn btn-primary">Lưu</button> *@
+
+                        <button type="button" class="btn btn-primary" onclick="saveForm()">Lưu</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@section scripts {
+    <link href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+
+
+    <script src="~/lib/summernote/summernote-bs4.js"></script>
+    @*    <link href="~/lib/summernote/summernote-bs4.min.css" rel="stylesheet" /> *@
+    <script src="~/js/animation.js"></script>
+
+    <link href="~/lib/summernote/summernote.css" rel="stylesheet" />
+    <link href="~/lib/summernote/summernote.min.css" rel="stylesheet" />
+    <script src="~/lib/summernote/summernote.js"></script>
+    <script src="~/lib/summernote/summernote.min.js"></script>
+    <a href="~/lib/summernote/summernote.js.map"></a>
+    <a href="~/lib/summernote/summernote.min.js.map"></a>
+    <link href="~/lib/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="~/lib/summernote/summernote-bs4.min.css" rel="stylesheet" />
+    <script src="~/lib/summernote/summernote-bs4.js"></script>
+    <script src="~/lib/summernote/summernote-bs4.min.js"></script>
+    <a href="~/lib/summernote/summernote-bs4.js.map"></a>
+    <a href="~/lib/summernote/summernote-bs4.min.js.map"></a>
+    <script src="~/lib/summernote/summernote-lite.js"></script>
+    <script src="~/lib/summernote/summernote-lite.min.js"></script>
+    <a href="~/lib/summernote/summernote-lite.js.map"></a>
+    <a href="~/lib/summernote/summernote-lite.min.js.map"></a>
+    <link href="~/lib/summernote/summernote-lite.css" rel="stylesheet" />
+    <link href="~/lib/summernote/summernote-lite.min.css" rel="stylesheet" />
+    <script>
+        /*
+            This demo renders the grid in "DejaVu Sans" font family, which is
+            declared in kendo.common.css. It also declares the paths to the
+            fonts below using <tt>kendo.pdf.defineFont</tt>, because the
+            stylesheet is hosted on a different domain.
+        */
+        // Fix xuất file PDF
+        kendo.pdf.defineFont({
+            "DejaVu Sans": "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
+            "DejaVu Sans|Bold": "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",
+            "DejaVu Sans|Bold|Italic": "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+            "DejaVu Sans|Italic": "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+            "WebComponentsIcons": "https://kendo.cdn.telerik.com/2017.1.223/styles/fonts/glyphs/WebComponentsIcons.ttf"
+        });
+    </script>
+}
+
+
+
+<script>
+    function addImageInput() {
+        var container = document.getElementById('imageInputsContainer');
+        var inputCount = container.getElementsByTagName('input').length;
+
+        if (inputCount < 6) {
+            var newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.name = 'formFiles';
+            newInput.className = 'form-control';
+            newInput.accept = 'image/*';
+            newInput.multiple = true;  // Allow multiple file selection
+            container.appendChild(newInput);
+        }
+    }
+
+</script>
+
+<script>
+
+    // var editor = $("#description").kendoEditor({
+    //     // stylesheets: [
+    //     //     "../content/shared/styles/editor.css",
+    //     // ],
+    //     tools: [
+    //         "bold",
+    //         "italic",
+    //         "underline",
+    //         "strikethrough",
+    //         "fontName",
+    //         "fontSize",
+    //         "foreColor",
+    //         "backColor",
+    //         "insertImage",
+    //         "createLink",
+    //         "undo",
+    //         "redo",
+    //         "justifyLeft",
+    //         "justifyCenter",
+    //         "justifyRight",
+    //         "insertUnorderedList",
+    //         "insertOrderedList",
+    //         "indent",
+    //         "outdent",
+    //         "formatBlock",
+    //         "clearFormat"
+    //     ]
+    // });
+
+    $(document).ready(function () {
+        $('#description').summernote({
+            toolbar: [
+                ['style', ['style']],
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['fontname', ['fontname']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']],
+            ],
+        });
+    });
+    $(document).ready(function () {
+
+        // gọi form khi nhấn edit
+
+        var editButtons = document.querySelectorAll('.k-button k-button-icontext k-grid-capnhat');
+
+
+        $("#grid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "/ProductDetail/GetProductDetail",
+                        type: "GET",
+                        dataType: "json"
+                    },
+                    destroy: {
+                        url: "/",
+                        type: "DELETE",
+                        dataType: "json"
+                    },
+
+                },
+                schema: {
+                    data: "result",
+                    total: "count", // Chỉ định tên trường tổng số dòng,
+                },
+
+                pageSize: 20,
+
+                // thêm thành công sẽ hiển thị thông báo thêm thành công
+                requestEnd: function (e) {
+                    if (e.type === "create" && e.response) {
+                        var result = e.response.Result || {};
+                        if (result.Errors && result.Errors.length > 0) {
+                            alert("Thêm mới thất bại: " + result.Errors.join(", "));
+                        } else {
+                            alert("Thêm mới thành công!");
+                        }
+                    }
+                },
+            },
+
+
+
+            height: 550,
+            groupable: false,
+            sortable: true,
+            pageable: {
+                refresh: true,
+                pageSizes: [5, 10, 20, "All"],
+                buttonCount: 3,
+                messages: {
+                    itemsPerPage: "Số dòng trên mỗi trang",
+                    display: "{0}-{1} trong {2} dòng"
+                }
+            },
+
+            toolbar: [
+                {
+                    name: "pdf",
+                    text: "Xuất file PDF" // Change the text of the "PDF" button to "Xuất file PDF"
+                },
+                { name: "search" }
+            ],
+            search: true, // Bật tính năng tìm kiếm
+
+            pdf: {
+                allPages: true,
+                avoidLinks: true,
+                paperSize: "A4",
+                margin: { top: "2cm", left: "1cm", right: "1cm", bottom: "1cm" },
+                landscape: true,
+                repeatHeaders: true,
+                template: $("#page-template").html(),
+                scale: 0.8
+            }
+            ,
+            editable: {
+                mode: "popup",
+                window: { width: 1500, height: 1000 }, // Chỉnh chiều rộng ở đây
+            },
+            columns: [
+                {
+                    field: "code", title: "Mã", operator: "contains", filterable: { multi: true, search: true }
+                },
+                {
+                    field: "nameProduct",
+                    title: "Tên sản phẩm",
+                    operator: "contains", filterable: { multi: true, search: true }
+                },
+                {
+                    field: "nameManufacturer",
+                    title: "Hãng sản xuất",
+                    operator: "contains", filterable: { multi: true, search: true }
+                },
+                {
+                    field: "nameProductType",
+                    title: "Dòng sản phẩm",
+                    hidden: true, // Ẩn cột này
+
+
+
+                },
+                {
+                    field: "tenCpu",
+                    title: "Vi xử lý",
+                    hidden: true
+
+                },
+                {
+                    field: "thongSoRam",
+                    title: "Ram",
+
+                },
+                {
+                    field: "thongSoHardDrive",
+                    title: "SSD",
+                    hidden: true
+                },
+                {
+                    field: "price",
+                    title: "Giá"
+                },
+                {
+                    field: "availableQuantity",
+                    title: "Số lượng"
+                },
+                {
+                    field: "status",
+                    title: "Trạng thái",
+                    template: function (dataItem) {
+                        return getStatusMessage(dataItem);
+                    }
+                },
+                // {
+                //     field: "yourFieldName", // Replace with your actual field name
+                //     title: "Your Field Title",
+                //     editor: function (container, options) {
+                //         // Create a textarea element
+                //         var textarea = $('<textarea name="description" id="editor"  style="width:1000; heigpxht:840px" aria-label="editor"></textarea>')
+                //             .attr("name", options.field)
+                //             .appendTo(container);
+
+                //         // Bind the field's value to the textarea
+                //         textarea.val(options.model[options.field]);
+
+                //         // Enable the textarea
+                //         textarea.prop("disabled", false);
+
+                //         // Handle changes in the textarea
+                //         textarea.on("change", function () {
+                //             options.model[options.field] = textarea.val();
+                //         });
+                //     }
+                // },
+                {
+                    command: [
+                        {
+                            name: "capnhat",
+                            template: '<a class="k-button k-button-icontext k-grid-capnhat" href="\\#"><span class="k-icon k-i-edit"></span>Sửa</a>',
+                            text: "sửa",
+                            click: function (e) {
+                                e.preventDefault();
+                                var dataItem = this.dataItem($(e.target).closest("tr"));
+                                var productId = dataItem.id; // Assuming 'Id' is the property that holds the ID
+                                openEditModal(productId);
+                            }
+
+                        },
+                        {
+                            name: "destroy",
+                            text: "Xóa",
+
+                        },
+                    ],
+                    title: "Hành động",
+                    width: "250px",
+                    exportable: false
+                }
+            ],
+
+        });
+        var newTextarea = $('<textarea id="editor" rows="10" cols="30" style="width:100%; height:840px" aria-label="editor"></textarea>');
+
+        // Find elements with the specified class and prepend the textarea before them
+        $(".k-edit-buttons.k-state-default").prepend(newTextarea);
+        // tạo 1 nút thêm(Create New) trước class k-grid-pdf
+        var newButton = $('<a type="button" class="k-button k-button-icontext k-grid-create" data-bs-toggle="modal" data-bs-target="#exampleModal"><span class="k-icon k-i-add"></span>Thêm</a> ');
+        // Find elements with the specified class and prepend the textarea before them
+        $(".k-grid-pdf").before(newButton);
+
+
+    });
+
+    // function openEditModal(Id) {
+    //     $.ajax({
+    //         url: "/ProductDetail/Index?guid=" + Id,
+    //         type: "GET",
+    //         dataType: "json",
+    //         success: function (data) {
+    //             // Điền vào các trường biểu mẫu phương thức với dữ liệu từ máy chủ
+    //             $("#updateModal").modal("show");
+    //             $("#Code").val(data.Code);
+    //             $("#selectProductName").val(data.IdProduct);
+    //             // Điền các trường biểu mẫu khác tương tự
+
+
+    //         },
+    //         error: function () {
+    //             // Xử lý lỗi
+    //         }
+    //     });
+    // }
+
+    $(document).ready(function () {
+        // Change the text of the button
+        $("#pdf-export-button").text("Xuất file PDF");
+    });
+
+    function openEditModal(Id) {
+        $.ajax({
+            url: "/ProductDetail/Update?id=" + Id,
+            type: "GET",
+            dataType: "html",
+            success: function (response) {
+                // Tải nội dung modal vào div ẩn
+                $("#modalContent").html(response);
+
+                // Mở modal
+                $("#updateModal").modal("show");
+            },
+            error: function () {
+                // Xử lý lỗi
+            }
+        });
+    }
+
+    function getStatusMessage(dataItem) {
+        if (dataItem.status === 1) {
+            return "Đang kinh doanh";
+        } else {
+            return "Ngưng kinh doanh";
+        }
+    }
+
+    function saveForm() {
+        var formData = new FormData(document.getElementById('formedit'));
+
+        // Thực hiện request và hiển thị thông báo
+        performRequest(formData);
+    }
+
+    function performRequest(formData) {
+        $.ajax({
+            url: '/ProductDetail/Createaa',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (results) { 
+            debugger
+                console.log(results);
+                // Hiển thị thông báo dựa trên kết quả từ server
+                if (results.code===200) {
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "success");
+                    $('#exampleModal').modal('hide');
+                    // Tải lại dữ liệu của grid
+                    var grid = $("#grid").data("kendoGrid");
+                    if (grid) {
+                        grid.dataSource.read();
+                        grid.refresh();
+                    }
+
+                   
+                }else{
+                    debugger
+                    console.log(results.message);
+                    showNotification(results.message, "error");
+                    
+                }
+            },
+            error: function () {
+                showNotification("Lỗi hệ thống", "error");
+            }
+        });
+    }
+
+
+
+
+    // Function hiển thị thông báo
+    function showNotification(message, type) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Hiển thị thông báo theo loại
+        if (type === "success") {
+            toastr.success(message);
+        } else {
+            toastr.error(message);
+        }
+    }
+
+
+
+</script>
+

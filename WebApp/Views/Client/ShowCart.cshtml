@@ -1,0 +1,334 @@
+﻿@{
+    int stt = 0;
+    string statuswallet = ViewContext.HttpContext.Session.GetString("StatusPointWallet");
+    string username = ViewContext.HttpContext.Session.GetString("username");
+    double thanhTien = 0;
+    double tongTien = 0;
+    string fullname = ViewContext.HttpContext.Session.GetString("full_name");
+    string phoneNumber = ViewContext.HttpContext.Session.GetString("phoneNumber");
+    string address = ViewContext.HttpContext.Session.GetString("address");
+}
+<style>
+    .container{
+        max-width:1400px !important;
+    }
+</style>
+<section class="h-100 h-custom" style="font-family: Inter;
+	font-size: 16px;">
+    <div class="container h-100 py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Số thứ tự</th>
+                                <th scope="col">Mã sản phẩm</th>
+                                <th scope="col">Số lượng</th>
+                                <th scope="col">Thành tiền</th>
+                            <th scope="col">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in ViewBag.cartItem)
+                            {
+                                stt++;
+                                thanhTien = t.Price * t.Quantity;
+                                tongTien += thanhTien; // Accumulate the total for each item
+                            <tr>
+                                <th>@stt</th>
+                                <th>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-column ms-4">
+                                                <p class="mb-2">@t.MaProductDetail</p>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <td class="align-middle">
+                                        <div class="d-flex flex-row">
+                                            <button class="btn btn-link px-2 decrease-quantity" data-id="@t.Id">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <label id="quantity-cartdetail" class="form-control form-control-sm quantity-input" style="width: 50px;" data-id="@t.Id">@t.Quantity</label>
+                                            <button class="btn btn-link px-2 increase-quantity" data-id="@t.Id">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                <td class="align-middle">
+                                        <p class="mb-0" style="font-weight: 500;">@(t.Price * t.Quantity)</p>
+                                </td>
+                                <td>
+                                    <a asp-controller="Client" asp-action="DeleteCartDetail" asp-route-idCartDetail="@t.Id">Xóa</a>
+                                </td>
+                            </tr>
+                            }
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Tổng tiền:</strong></td>
+                                <td><strong id="totalAmount" name="totalAmount">@tongTien</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+  </div>
+  <div class="card shadow-2-strong mb-5 mb-lg-0" style="border-radius: 16px;">
+                    <div class="card-body p-4">
+                <form asp-controller="Client" asp-action="CreateBill">
+                        <div class="row">
+                        <div class="col-md-4 col-sm-4" style="border: solid 1px darkorchid;">
+                        <h3>Chọn phương thức thanh toán:</h3>
+                        <div>
+                            <input type="radio" id="option1" name="options" onclick="displayText('Nhận hàng và thanh toán tiền tại cửa hàng Laptop Phương Thảo: Số 18 phố Linh Lang, Ba Đình, Hà Nội')">
+                            <label for="option1">Thanh toán tại cửa hàng</label><br />
+
+                            <input type="radio" id="option2" name="options" onclick="displayText('Trả tiền mặt khi giao hàng')">
+                            <label for="option2">Thanh toán khi nhận hàng (COD)</label><br />
+
+                            <input type="radio" id="option3" name="options" onclick="displayText('Thực hiện thanh toán vào tài khoản ngân hàng của chúng tôi. Vui lòng sử dụng Mã đơn hàng của bạn trong phần Nội dung đơn đặt hàng thành công. Đơn hàng sẽ đươc giao sau khi tiền đã chuyển. Thông tin tài Khoản ngân hàng: – STK: 08489497321 – Chủ TK: Phạm Thùy Linh – Tại ngân hàng TCB chi nhánh Nam Từ Liêm')">
+                            <label for="option3">Thanh toán bằng chuyển khoản ngân hàng</label>
+
+                            <div id="result" style="background-color:aqua"></div>
+                        </div>
+                       
+                            </div>
+
+                        <div class="col-md-4 col-sm-4" style="border: solid 1px darkorchid;">
+                       
+                            <div class="mb-3">
+                                <label class="form-label">Họ và tên</label>
+                                <input type="text" name="FullName" class="form-control" value="@fullname">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Địa chỉ</label>
+                                <input type="text" name="Address" class="form-control" value="@address">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="text" name="PhoneNumber" class="form-control" value="@phoneNumber">
+                            </div>
+                        
+                    </div>
+                        <div class="col-md-4 col-sm-4" style="border: solid 1px darkorchid;">
+                        <div class="d-flex justify-content-between" style="font-weight: 500;">
+                            <p class="mb-2">Tổng tiền</p>
+                            <p class="mb-2">@tongTien</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between" style="font-weight: 500;">
+                            <p class="mb-0">Phí ship</p>
+                            <p class="mb-0">0</p>
+                        </div>
+                       
+
+                            <input type="hidden" name="totalAmount" id="hiddenTotalAmount" value="@tongTien" />
+
+                            <div class="form-outline mb-4">
+                                <label class="form-label" for="voucherSelect">Chọn mã giảm giá</label>
+                                <select id="voucherSelect" name="CodeVoucher" class="form-select form-select-lg">
+                                    <option value="null">Không có</option>
+                                    @foreach (var i in ViewBag.listVoucher)
+                                    {
+                                        <option value="@i.MaVoucher">@i.MaVoucher</option>
+                                    }
+                                </select>
+
+
+                                @*    @{
+                                if (statuswallet == "2")
+                                {
+
+                                <label>Ví điểm của @username </label>
+                                <div id=" id=" sodiemhiencolb"" style="color: blue;">Số điểm hiện có:  <label class="form-label" id="sodiemhiencolb"></label></div>
+                                <label class="form-label" for="sudungdiem">Sử dụng điểm: </label>
+                                <input type="number" id="diemInput" name="PointYouWanToUse"/>
+                                <div id="error-message" style="color: red;"></div>
+
+
+                                }
+
+                                } *@
+
+                               @*  @{
+                                    if (statuswallet == "2")
+                                    {
+                                        <label>Ví điểm của @username </label>
+                                        <div id="sodiemhiencolb" style="color: blue;">Số điểm hiện có: <label class="form-label" id="sodiemhiencolb"></label></div>
+                                        <label class="form-label" for="sudungdiem">Sử dụng điểm: </label>
+                                        <div class="form-check">
+                                            <input type="checkbox" id="useAllPoints" name="useAllPoints" class="form-check-input" value="true">
+
+                                        </div>
+                                        <input type="number" id="diemInput" name="PointYouWanToUse" hidden />
+                                        <div id="error-message" style="color: red;"></div>
+                                    }
+                                }
+ *@
+                            </div>
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
+                                <p class="mb-2">Thành tiền</p>
+                                <p class="mb-2" id="thanhtien">@tongTien</p>
+                            </div>
+                            <input type="number" name="giaTriGioHang" id="giaTriGioHang" hidden />
+                            <button class="btn btn-primary btn-block btn-lg" style="max-width:200px" type="submit">
+                                <div class="d-flex justify-content-between">
+                                    <span>Đặt hàng</span>
+
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                        </div>
+                    </div>
+
+                </div>
+        
+    </div>
+</section>
+<script>
+    function displayText(text) {
+        document.getElementById("result").innerHTML = "Bạn đã chọn: " + text;
+    }
+   
+    $(document).ready(function () {
+        $(".decrease-quantity").click(function () {
+            var itemId = $(this).data("id");
+            var row = $(this).closest('tr');
+            var quantityLabel = row.find(".quantity-input");
+
+            $.ajax({
+                url: '/Client/DecreaseQuantity',
+                type: 'POST',
+                data: { idCartDetail: itemId },
+                success: function (response) {
+                    var currentQuantity = parseInt(quantityLabel.text());
+                    var newQuantity = currentQuantity - 1;
+                    quantityLabel.text(newQuantity);
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+        $(".increase-quantity").click(function () {
+            var itemId = $(this).data("id");
+            var row = $(this).closest('tr');
+            var quantityLabel = row.find(".quantity-input");
+            $.ajax({
+                url: '/Client/IncreaseQuantity',
+                type: 'POST',
+                data: { idCartDetail: itemId },
+                success: function (response) {
+                    var currentQuantity = parseInt(quantityLabel.text());
+                    var newQuantity = currentQuantity + 1;
+                    quantityLabel.text(newQuantity);
+                    location.reload();
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    });
+
+</script>
+<script>
+    var soDiemHienCo;
+
+    // Hàm để lấy số điểm hiện có từ backend
+    async function fetchSoDiemHienCo() {
+        try {
+            var name = "@(username)";
+
+            const response = await fetch('https://localhost:44333/api/ChucNangTichDiem/GetThePointOfWallet?usename=' + name);
+            const data = await response.json();
+
+            // Cập nhật giá trị của soDiemHienCo từ dữ liệu nhận được từ backend
+            soDiemHienCo = data.soDiemHienCo;
+            console.log(soDiemHienCo);
+            console.log(response);
+            // Gọi hàm validateInput để kiểm tra giá trị nhập vào
+            validateInput();
+            document.getElementById("sodiemhiencolb").innerText = soDiemHienCo.toString();
+
+        } catch (error) {
+            console.error('Error fetching soDiemHienCo:', error);
+        }
+    }
+
+    // Gọi hàm fetchSoDiemHienCo khi trang được tải để lấy số điểm hiện có từ backend
+    window.addEventListener('load', fetchSoDiemHienCo);
+    var tongTien = @tongTien;
+    // Function to update the input value based on the checkbox state
+    function updatePointsInput() {
+        var diemInput = document.getElementById("diemInput");
+        var useAllPointsCheckbox = document.getElementById("useAllPoints");
+
+        // If the checkbox is checked, set the input value to the available points
+        if (useAllPointsCheckbox.checked) {
+            diemInput.value = soDiemHienCo;
+            diemInput.disabled = true; // Disable the input when using all points
+
+            var diemToTienExchangeRate = 10000;
+            var diemInputValue = parseInt(diemInput.value);
+
+            if (!isNaN(diemInputValue) && diemInputValue > 0) {
+              
+                var tienConverted = diemInputValue * diemToTienExchangeRate;
+                console.log(tienConverted);
+                tongTien -= tienConverted; console.log(tongTien);
+            }
+
+        } else {
+            diemInput.value = ""; // Clear the input value
+            diemInput.disabled = false; // Enable the input when not using all points
+            tongTien = @tongTien;
+        }
+
+        document.getElementById("totalAmount").innerText = tongTien;
+        document.getElementById("thanhToan").innerText = tongTien;
+        document.getElementById("datHang").innerText = tongTien;
+        document.getElementById("thanhtien").innerText = tongTien;
+        document.getElementById("giaTriGioHang").innerText = tongTien;
+        document.getElementById("hiddenTotalAmount").value = tongTien;
+        validateInput(); // Validate the input based on the updated value
+    }
+
+    // Attach the updatePointsInput function to the checkbox change event
+    document.getElementById("useAllPoints").addEventListener("change", updatePointsInput);
+
+    // Function to validate the input based on its value
+    function validateInput() {
+        var diemInput = document.getElementById("diemInput");
+        var diemInputValue = diemInput.value.trim();
+
+        // If the input is disabled, clear any error messages
+        if (diemInput.disabled) {
+            document.getElementById("error-message").innerText = "";
+            return;
+        }
+
+        // Your existing validation logic...
+        // Make sure to adjust your validation based on the updated input state
+
+        // Check if the point balance is zero, hide the checkbox, and show the point balance
+        if (soDiemHienCo === 0) {
+            document.getElementById("useAllPoints").style.display = "none";
+            document.getElementById("diemInput").style.display = "none";
+            document.getElementById("sodiemhiencolb").innerText = "Số điểm hiện có: " + soDiemHienCo;
+        } else {
+            document.getElementById("useAllPoints").style.display = "inline"; // Show the checkbox
+            document.getElementById("sodiemhiencolb").innerText = "Số điểm hiện có: " + soDiemHienCo;
+        }
+    }
+
+    // Gọi hàm fetchSoDiemHienCo khi trang được tải để lấy số điểm hiện có từ backend
+    window.addEventListener('load', fetchSoDiemHienCo);
+
+    // ... (Your existing code)
+
+</script>
+

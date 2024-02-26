@@ -1,0 +1,206 @@
+﻿<div class="profile text-center my-4">
+    <img src="~/Image/avt1.webp" alt="profile_picture" class="rounded-circle" style="width: 80px; height: 80px;">
+    <h3 class="mt-2">Quản trị</h3>
+</div>
+<div class="nav-container">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                @* <span class="icon"><i class="fas fa-home"></i></span> *@
+                <span class="item text-left">Home</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a id="Statistical" href="/ManagePost" class="nav-link">
+                @* <span class="icon"><i class="fas fa-user-friends"></i></span> *@
+                <span class="item text-left">Quản lý bài đăng</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a id="Statistical" href="/Statistical" class="nav-link">
+                @* <span class="icon"><i class="fas fa-user-friends"></i></span> *@
+                <span class="item text-left">Thống kê</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <div id="Bill">
+                <a href="/Bill" class="nav-link">
+                    @* <span class="icon"><i class="fas fa-desktop"></i></span> *@
+                    <span class="item text-left">Hóa đơn</span>
+                </a>
+            </div>
+        </li>
+        
+        <li class="nav-item">
+            <a id="ProductDetail" href="/ProductDetail" class="nav-link">
+                @* <span class="icon"><i class="fas fa-user-friends"></i></span> *@
+                <span class="item text-left">Sản phẩm chi tiết</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#submenu2" data-bs-toggle="collapse" class="nav-link">
+                @* <span class="icon"><i class="fas fa-chart-line"></i></span> *@
+                <span class="item text-left">Quản Lí Các chi tiết</span>
+            </a>
+            <ul class="collapse nav flex-column ms-4" id="submenu2" data-bs-parent="#menu">
+                <li class="w-100">
+                    <a href="/Product" class="nav-link"> <span class="item text-left">Sản Phẩm</span></a>
+                </li>
+                <li class="w-100">
+                    <a href="/ProductType" class="nav-link"> <span class="item text-left">Loại sản phẩm</span></a>
+                </li> 
+                <li class="w-100">
+                    <a href="/CardVGA" class="nav-link"> <span class="item text-left">CardVGA</span></a>
+                </li>
+                <li>
+                    <a href="/Color" class="nav-link"> <span class="item text-left">Màu sắc</span></a>
+                </li>
+                <li>
+                    <a href="/Cpu" class="nav-link"> <span class="item text-left">Cpu</span></a>
+                </li>
+                <li>
+                    <a href="/HardDrive" class="nav-link"> <span class="item text-left">HardDrive</span></a>
+                </li>
+                <li>
+                    <a href="/Manufacturer" class="nav-link"> <span class="item text-left">Hãng Sản Xuất</span></a>
+                </li>
+                <li>
+                    <a href="/Ram" class="nav-link"> <span class="item text-left">Ram</span></a>
+                </li>
+                <li>
+                    <a href="/Screen" class="nav-link"> <span class="item text-left">Màn Hình</span></a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="/Serial" class="nav-link">
+                @* <span class="icon"><i class="fas fa-tachometer-alt"></i></span> *@
+                <span class="item text-left">Serial</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/Voucher" class="nav-link">
+                @* <span class="icon"><i class="fas fa-user-shield"></i></span> *@
+                <span class="item text-left">Voucher</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/GiamGia" class="nav-link">
+                @* <span class="icon"><i class="fas fa-tachometer-alt"></i></span> *@
+                <span class="item text-left">Giảm Giá</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="/SanPhamGiamGia" class="nav-link">
+                @* <span class="icon"><i class="fas fa-tachometer-alt"></i></span> *@
+                <span class="item text-left">Sản Phẩm Giảm Giá</span>
+            </a>
+        </li>
+      @*   <li class="nav-item">
+            <a href="/User" class="nav-link">
+                <span class="item text-left">Quản lí người dùng</span>
+            </a>
+        </li> *@
+        @* <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="icon"><i class="fas fa-database"></i></span>
+                <span class="item text-left">Development</span>
+            </a>
+        </li> *@
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                @* <span class="icon"><i class="fas fa-user-shield"></i></span> *@
+                <span class="item text-left">Admin</span>
+            </a>
+        </li>
+
+        @* <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="icon"><i class="fas fa-cog"></i></span>
+                <span class="item text-left">Settings</span>
+            </a>
+        </li> *@
+
+        <li class="nav-item">
+            <form asp-controller="Home" asp-action="Logout" method="post" id="logoutForm">
+                <button type="submit" class="nav-link" id="logoutButton">
+                    <!-- <span class="icon"><i class="fas fa-sign-out-alt"></i></span> -->
+                    <span class="item text-left">Đăng Xuất</span>
+                </button>
+            </form>
+        </li>
+
+
+    </ul>   
+</div>
+
+<style>
+
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-container {
+        height: 100%;
+        max-height: 100%;
+        overflow-y: auto;
+    }
+
+    .nav-link .item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 12px;
+    }
+
+    #logoutButton {
+        background-color: #007bff; /* Màu nền khi bình thường */
+        color: #fff; /* Màu chữ khi bình thường */
+        border: none;
+        padding: 8px 16px; /* Kích thước padding cho nút */
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s; /* Hiệu ứng chuyển đổi màu sắc trong 0.3 giây */
+    }
+
+        #logoutButton:hover {
+            background-color: #0056b3; /* Màu nền khi di chuột vào */
+            color: #fff; /* Màu chữ khi di chuột vào */
+        }
+
+
+</style>
+
+<script>
+    function handleClick(element) {
+        // Loại bỏ 'active' từ tất cả các mục
+        $('.nav-link').removeClass('active');
+
+        // Thêm 'active' vào mục được chọn
+        $(element).addClass('active');
+    }
+</script>
+
+
+@*  <script>
+    var loginButton = document.getElementById('Bill');
+    loginButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        $.ajax({
+            url: "/Bill/Index",
+            type: "GET",
+            success: function (result) {
+                $("#rootAdmin").html(result); // Cập nhật nội dung của phần tử trên trang web
+            },
+            error: function () {
+                alert("Có lỗi xảy ra.");
+            }
+        });
+
+    })
+    </script>
+ *@
+

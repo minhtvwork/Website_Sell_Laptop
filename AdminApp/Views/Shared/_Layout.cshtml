@@ -1,0 +1,45 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] Quản Trị Website Phương Thảo</title> 
+    <link href="~/lib/bootstrap/bootstrap-5.0.2-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/lib/bootstrap/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"> </script>
+    <script src="~/lib/jquery/jquery-3.6.0.min.js"></script>
+    @* add kendo 6.7.0 *@
+    <link href="https://kendo.cdn.telerik.com/themes/6.7.0/default/default-main.css" rel="stylesheet" />
+    @* add kendo all min js 2021.3.914 *@
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <link href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default.min.css" rel="stylesheet" />
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>  
+    <link href="~/css/slidebar.css" rel="stylesheet" />
+    <link href="~/css/layout_kendo_grid/canchinhfilepdf.css" rel="stylesheet" />
+    <link href="~/css/layout_kendo_grid/popup.css" rel="stylesheet" />
+    <link href="~/css/Login/Login.css" rel="stylesheet"/>
+    <link href="~/css/gridstyle.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="wrapper">
+        <div class="section">
+            <div class="top_navbar">
+                <div class="hamburger">
+                    <a href="#">
+                        <i class="fas fa-bars"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar">
+            @await Html.PartialAsync("_Slidebar")
+        </div>
+        <div id="rootAdmin" class="content" style="padding-left:250px">
+        @RenderBody()
+        </div>  
+ </div>
+    <script src="./js/animation.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

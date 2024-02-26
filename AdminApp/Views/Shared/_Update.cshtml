@@ -1,0 +1,160 @@
+﻿@model Shop_Models.Entities.ProductDetail
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    ViewData["Title"] = "Update Product Detail";
+    @* @using Shop_Models;
+    @using Shop_Models.Entities; *@
+
+}
+
+<style>
+    #updateModal {
+        z-index: 9999; /* Adjust the value as needed */
+    }
+
+    /* Đặt kích thước modal mặc định */
+    .modal-dialog {
+        max-width: 90%;
+        width: auto;
+    }
+
+    /* Thiết lập thuộc tính cho việc kéo modal */
+    .modal-content {
+        overflow: hidden; /* Ngăn chặn nội dung bên ngoài khỏi modal */
+    }
+
+    /* Thiết lập kích thước của modal-body khi kéo */
+    .modal-body {
+        max-height: 80vh; /* Điều chỉnh kích thước tùy ý dựa trên nhu cầu của bạn */
+        overflow-y: auto;
+    }
+
+</style>
+
+
+
+
+
+<div id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false" class="modal fade">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="updateLabel">Cập nhật sản phẩm</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div class="modal-body">
+                <div id="example">
+                    <form asp-action="Update"  method="post">
+                       <div class="row">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <div class="form-group col-md-3">
+                                <div class="form-group">
+                                    <label asp-for="Code">Mã Sản Phẩm</label>
+                                    <input asp-for="Code" class="form-control" />
+                                    <span asp-validation-for="Code" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label asp-for="Price">Giá Bán</label>
+                                <input asp-for="Price" class="form-control" required />
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label asp-for="ImportPrice">Giá Nhập</label>
+                                <input asp-for="ImportPrice" class="form-control" required />
+                                <span asp-validation-for="ImportPrice" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label asp-for="Upgrade">Nâng cấp</label>
+                                <input asp-for="Upgrade" class="form-control" required />
+                                <span asp-validation-for="Upgrade" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label asp-for="Status">Trạng Thái</label>
+                                <select asp-for="Status" class="form-select" aria-label="Default select example">
+                                    <option value="0">Ngưng kinh doanh</option>
+                                    <option value="1">Kinh Doanh</option>
+                                </select>
+
+
+                            </div>
+                            <div class="col-md-3">
+                                <label for="exampleFormControlInput1" class="form-label">Hình Ảnh</label>
+                                <div id="imageInputsContainer">
+                                    @foreach (var image in ViewBag.ImagesPD)
+                                    {                     
+                                        <img src="@Configuration.GetSection("UrlApiAdmin").Value@Url.Content(image.LinkImage)" alt="Product Image" class="img-thumbnail" />
+                                       
+                                    }
+                                </div>
+                            </div>
+                       </div>
+                        <div class="form-group">                       
+                            <div class="demo-section wide">
+                                <label for="exampleFormControlInput1" class="form-label">bài đăng, chi tiết về sản phẩm</label>
+                                <div class="k-editor">
+                                    <textarea asp-for="Description" class="form-control is-invalid"  id="description" rows="30" cols="30" style="width:100%; height:750px" aria-label="editor" required></textarea>
+                                </div>
+
+                                <div class="invalid-feedback">
+                                    Vui lòng nhập nội dung trường này.
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var editor = $("#description").kendoEditor({
+        // stylesheets: [
+        //     "../content/shared/styles/editor.css",
+        // ],
+        tools: [
+            "bold",
+            "italic",
+            "underline",
+            "strikethrough",
+            "fontName",
+            "fontSize",
+            "foreColor",
+            "backColor",
+            "insertImage",
+            "createLink",
+            "undo",
+            "redo",
+            "justifyLeft",
+            "justifyCenter",
+            "justifyRight",
+            "insertUnorderedList",
+            "insertOrderedList",
+            "indent",
+            "outdent",
+            "formatBlock",
+            "clearFormat"
+        ]
+    });
+</script>
+
+<script>
+    function addImageInput() {
+        var container = document.getElementById('imageInputsContainer');
+        var inputCount = container.getElementsByTagName('input').length;
+        if (inputCount < 6) {
+            var newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.name = 'Images';
+            newInput.className = 'form-control';
+            newInput.accept = 'image/*';
+            container.appendChild(newInput);
+        }
+    }
+</script>
